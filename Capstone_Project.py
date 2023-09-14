@@ -75,7 +75,9 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
+separator_html = """
+<div style="background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); height: 3px;"></div>
+"""
 with st.sidebar:
     st.image("images/Logo.png")
     st.image(f'Project_1/images/RFM.png', width=60)
@@ -236,10 +238,6 @@ if project_num == 1:
 
         st.markdown('### Dữ liệu được cung cấp:')
         st.dataframe(df_cdnow_raw.head())
-
-        separator_html = """
-        <div style="background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); height: 3px;"></div>
-        """
 
         st.markdown(separator_html, unsafe_allow_html=True)
 
@@ -962,7 +960,10 @@ if project_num == 1:
                     # Create 2 columns
                     # Kết quả trả về 1 hay 2 => thì tự động set checkbox phương pháp 1 và ngược lại
                     if r_solution == 1:
+
+                        st.markdown(separator_html, unsafe_allow_html=True)
                         st.write(':blue[**HỆ THỐNG THẨM ĐỊNH: DỮ LIỆU MỚI THAY ĐỔI  :green[***KHÔNG ĐÁNG KỂ***]  SO VỚI DỮ LIỆU GỐC**]' if r_solution == 2 else ':blue[**HỆ THỐNG THẨM ĐỊNH: DỮ LIỆU MỚI THAY ĐỔI  :red[***RẤT ĐÁNG KỂ***]  SO VỚI DỮ LIỆU GỐC**]')
+                        st.markdown(separator_html, unsafe_allow_html=True)
                         st.markdown("##")
                         c1, c2 = st.columns(2)
                         c1.image('images/tham_dinh.png', width= 70,caption='')
@@ -979,8 +980,10 @@ if project_num == 1:
                         st.session_state.apply_solution1 = True
                         st.session_state.apply_solution2 = False
                     else:
-                        # st.image('images/tham_dinh_2.png', width= 30,caption='')
+                        st.markdown(separator_html, unsafe_allow_html=True)
                         st.write(':blue[**HỆ THỐNG THẨM ĐỊNH: DỮ LIỆU MỚI THAY ĐỔI  :green[***KHÔNG ĐÁNG KỂ***]  SO VỚI DỮ LIỆU GỐC**]' if r_solution == 2 else ':blue[**HỆ THỐNG THẨM ĐỊNH: DỮ LIỆU MỚI THAY ĐỔI  :red[***RẤT ĐÁNG KỂ***]  SO VỚI DỮ LIỆU GỐC**]')
+                        st.markdown(separator_html, unsafe_allow_html=True)
+                        
                         st.markdown("##")
                         c1, c2 = st.columns(2)                        
                         c2.image('images/tham_dinh_2.png', width= 70,caption='')
@@ -1008,9 +1011,11 @@ if project_num == 1:
                     select_k = c2.slider('', min_value=2, max_value=10, value=4, format='%.0f')
                     c3.markdown('##')                   
                     
+                   
                     col1, col2, col3 = st.columns(3)
                     col2.markdown("###")
                     button_clicked = col2.button('**AGREE TO THE TERMS AGREE TO PROCEED**')
+                    st.write("-------------------")
 
                     # st.write('FULL PROCESS METHOD',st.session_state.apply_solution1)  # Debug
                     # st.write('QUICK METHOD',st.session_state.apply_solution2)         # Debug
