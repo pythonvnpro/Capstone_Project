@@ -245,7 +245,7 @@ if project_num == 1:
             current_path = os.path.dirname(os.path.realpath(__file__))
             st.write(current_path)
             print(current_path)
-            st.image(f'/mount/src/capstone_project/Project_{project_num}/images/RFM.png', width=700)
+            st.image('/mount/src/capstone_project/Project_1/images/RFM.png', width=700)
             # Đường dẫn đến files png
             directory = f'Project_{project_num}/images/slides'
             images = project_show_range_img(directory, 11, 17)
