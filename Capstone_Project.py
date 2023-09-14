@@ -215,16 +215,6 @@ if project_num == 1:
     else:
         rfm_df = st.session_state['rfm_df']
 
-    if 'df_report' not in st.session_state:
-        df_report = df_cdnow.copy()
-        df_report= df_report.set_index('transaction_id')
-        df_report  = pd.concat([df_report , rfm_df], axis = 1).loc[:,["order_dt", "order_products", "order_amount", "month", "RFM_Score", "Customer_Group"]].reset_index()
-        df_report['order_dt'] = pd.to_datetime(df_report['order_dt'])
-        df_report['Year'] = df_report['order_dt'].dt.year
-        st.session_state['df_report']  = df_report
-    else:
-        df_report = st.session_state['df_report']        
-    
 ### END: TRÁNH LÀM CHẬM HỆ THỐNG DO PHẢI XỬ LÝ LẠI MỖI KHI CHỌN CÁC CHỨC NĂNG ###
 
     # Hiển thị danh sách các tùy chọn cho người dùng lựa chọn từng bước trong dự án
