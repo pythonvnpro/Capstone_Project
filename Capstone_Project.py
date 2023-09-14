@@ -687,7 +687,7 @@ if project_num == 1:
                     if len(sum_request_data) > len(request_data): # Lấy đúng dữ liệu file upload lên ra riêng 1 sheet.
                         request_data.to_excel(writer, sheet_name='Uploaded_customer_segmentation', index=False)
                 # Đọc tệp như một chuỗi byte
-                with open(f'Project_{project_num}/Export_Data/{filename}.xls', 'rb') as f:
+                with open(f'Project_{project_num}/Export_Data/{filename}.xlsx', 'rb') as f:
                     bytes_data = f.read()
                 return bytes_data
             
@@ -696,7 +696,7 @@ if project_num == 1:
                 key= label_key2,
                 label= 'Download data as Excel',
                 data= convert_df_excel(),
-                file_name=f'{filename}.xls',
+                file_name=f'{filename}.xlsx',
                 mime='application/octet-stream',
                 )
         def correctly_checkbox():
