@@ -11,6 +11,8 @@ squarify
 scipy
 findspark
 pyspark
-openpyxl
 gensim
 pathlib
+xlrd
+XlsxWriter
+xlwt
