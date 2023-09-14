@@ -78,7 +78,7 @@ st.markdown("""
 
 with st.sidebar:
     st.image("images/Logo.png")
-    st.image(f'Project_1/images/RFM.png', width=60)
+    st.image('Project_1/images/RFM.png', width=60)
 ### Functions: Chỉ cho hiện những hình nằm trong phạm vi cấu hình fr - to
 def project_show_range_img(directory, fr=1, to=24):
     # Use os.listdir to get all files in the directory
