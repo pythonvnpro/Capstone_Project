@@ -748,7 +748,6 @@ if project_num == 1:
             request_data = request_data.sort_values(by='transaction_id', ascending=True)
             request_data = request_data.reset_index()
             sum_request_data= request_data.copy()      # cho sheetname= 'Sum_&_segmentation_of_customers'
-            st.dataframe(sum_request_data.head())
             if len(filter_transID) > 1: # Có truyền list transaction_id để lọc lại chỉ lấy dữ liệu đúng trong file upload lên phân tích
                 request_data= request_data[~request_data['transaction_id'].isin(filter_transID)]
             st.dataframe(request_data.head(20).style.apply(highlight_rows_even_odd_2, axis=1))           
