@@ -681,11 +681,11 @@ if project_num == 1:
             # @st.cache_data
             def convert_df_excel():
                 # IMPORTANT: Cache the conversion to prevent computation on every rerun
-                with pd.ExcelWriter(f'Project_{project_num}/Export_Data/{filename}.xlsx') as writer:
-                    sum_request_data.to_excel(writer, sheet_name='Sum_customer_segmentation',index=False, encoding='utf-8')
-                    rfm_agg_kmeans_lds9.to_excel(writer, sheet_name='Information_for_each_cluster', index=False, encoding='utf-8')
+                with pd.ExcelWriter(f'Project_{project_num}/Export_Data/{filename}.xlsx', encoding='utf-8') as writer:
+                    sum_request_data.to_excel(writer, sheet_name='Sum_customer_segmentation',index=False)
+                    rfm_agg_kmeans_lds9.to_excel(writer, sheet_name='Information_for_each_cluster', index=False)
                     if len(sum_request_data) > len(request_data): # Lấy đúng dữ liệu file upload lên ra riêng 1 sheet.
-                        request_data.to_excel(writer, sheet_name='Uploaded_customer_segmentation', index=False, encoding='utf-8')
+                        request_data.to_excel(writer, sheet_name='Uploaded_customer_segmentation', index=False)
                 # Đọc tệp như một chuỗi byte
                 with open(f'Project_{project_num}/Export_Data/{filename}.xls', 'rb') as f:
                     bytes_data = f.read()
