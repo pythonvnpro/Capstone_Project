@@ -78,7 +78,7 @@ st.markdown("""
 
 with st.sidebar:
     st.image("images/Logo.png")
-    st.image('images/RFM.png', width=60)
+    st.image(f'Project_1/images/RFM.png', width=60)
 ### Functions: Chỉ cho hiện những hình nằm trong phạm vi cấu hình fr - to
 def project_show_range_img(directory, fr=1, to=24):
     # Use os.listdir to get all files in the directory
@@ -658,6 +658,7 @@ if project_num == 1:
             request_data = request_data.sort_values(by='transaction_id', ascending=True)
             request_data = request_data.reset_index()
             sum_request_data= request_data.copy()      # cho sheetname= 'Sum_&_segmentation_of_customers'
+            st.dataframe(sum_request_data.head())
             if len(filter_transID) > 1: # Có truyền list transaction_id để lọc lại chỉ lấy dữ liệu đúng trong file upload lên phân tích
                 request_data= request_data[~request_data['transaction_id'].isin(filter_transID)]
             st.dataframe(request_data.head(20).style.apply(highlight_rows_even_odd_2, axis=1))           
@@ -680,13 +681,13 @@ if project_num == 1:
             # @st.cache_data
             def convert_df_excel():
                 # IMPORTANT: Cache the conversion to prevent computation on every rerun
-                with pd.ExcelWriter(f'Project_{project_num}/Export_Data/{filename}.xlsx') as writer:
+                with pd.ExcelWriter(f'Project_{project_num}/Export_Data/{filename}.xls') as writer:
                     sum_request_data.to_excel(writer, sheet_name='Sum_customer_segmentation',index=False, encoding='utf-8')
                     rfm_agg_kmeans_lds9.to_excel(writer, sheet_name='Information_for_each_cluster', index=False, encoding='utf-8')
                     if len(sum_request_data) > len(request_data): # Lấy đúng dữ liệu file upload lên ra riêng 1 sheet.
                         request_data.to_excel(writer, sheet_name='Uploaded_customer_segmentation', index=False, encoding='utf-8')
                 # Đọc tệp như một chuỗi byte
-                with open(f'Project_{project_num}/Export_Data/{filename}.xlsx', 'rb') as f:
+                with open(f'Project_{project_num}/Export_Data/{filename}.xls', 'rb') as f:
                     bytes_data = f.read()
                 return bytes_data
             
@@ -695,7 +696,7 @@ if project_num == 1:
                 key= label_key2,
                 label= 'Download data as Excel',
                 data= convert_df_excel(),
-                file_name=f'{filename}.xlsx',
+                file_name=f'{filename}.xls',
                 mime='application/octet-stream',
                 )
         def correctly_checkbox():
