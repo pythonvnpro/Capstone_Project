@@ -242,7 +242,7 @@ if project_num == 1:
     elif step == 'Applicable models':
         tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["## **RFM**\n**\***", "## **RFM**\n**KMeans Sklearn**","## **RFM**\n**Hierarchical Scipy**","## **RFM**\n**pyspark KMeans**","## **RFM**\n**MiniBatchKMeans**","## **RFM**\n**DBSCAN**","## **Evaluating the models**\n**Report**"])
         with tab1: # RFM
-            st.image(f'Project_{project_num}/images/RFM.png', width=700)
+            st.image(f'./Project_{project_num}/images/RFM.png', width=700)
             # Đường dẫn đến files png
             directory = f'Project_{project_num}/images/slides'
             images = project_show_range_img(directory, 11, 17)
