@@ -132,6 +132,12 @@ project = left_column.selectbox(":blue[**Select project:**]", projects, index=0)
 # Lưu trữ chỉ số index của dự án được chọn
 project_num = projects.index(project) + 1
 
+def highlight_rows_even_odd(row, color1='#CBB279', color2='EEEEEE'):
+    if row.name % 2 == 0:
+        return [f'background-color: {color1}']*len(row)
+    else:
+        return [f'background-color: {color2}']*len(row)
+
 
 def highlight_rows_even_odd_1(row):
     if row.name % 2 == 0:
