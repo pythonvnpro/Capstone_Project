@@ -232,6 +232,10 @@ if project_num == 1:
             print(img)
             st.image(img)
     elif step == 'Preprocessing + EDA':
+        separator_html = """
+        <div style="background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); height: 3px;"></div>
+        """
+
         # chuyển cột date về kiểu datetime
         df_cdnow_raw.order_dt = df_cdnow_raw.order_dt.astype(str)
         df_cdnow_raw.order_dt= pd.to_datetime(df_cdnow_raw.order_dt, infer_datetime_format=True)
@@ -266,19 +270,22 @@ if project_num == 1:
 
         st.write('### Khai phá dữ liệu:')
 
+        df_cdnow_raw['Year']= pd.DatetimeIndex(df_cdnow_raw['order_dt']).year
+        df_cdnow_raw['Year'] = df_cdnow_raw['Year'].astype(str)
+
         st.write('#### Phân bố và outliers')
 
 
         # st.image('images/1.png')
         # st.image('images/2.png')
         # st.image('images/3.png')
-       
+
         st.write("**Quantity**")
-        fig_1 = px.histogram(df_cdnow_raw, x="order_products", marginal="box")
+        fig_1 = px.histogram(df_cdnow_raw, x="order_products", marginal="box", color='Year', color_discrete_sequence=['#F07B3F', '#609966'])
         st.plotly_chart(fig_1)
 
         st.write("**Price**")
-        fig_2 = px.histogram(df_cdnow_raw, x="order_amount", marginal="box")
+        fig_2 = px.histogram(df_cdnow_raw, x="order_amount", marginal="box", color='Year', color_discrete_sequence=['#903749', '#0D7377'] )
         st.plotly_chart(fig_2)
 
         st.write(''' **Nhận xét:**
@@ -291,28 +298,36 @@ if project_num == 1:
 
 
         st.write('#### Doanh thu và lượt khách qua các năm')
-
-        df_cdnow_raw['Year']= pd.DatetimeIndex(df_cdnow_raw['order_dt']).year
-        df_cdnow_raw['Year'] = df_cdnow_raw['Year'].astype(str)
-
-        # col1, col2 = st.columns(2)
-
-        st.write('**Doanh thu qua các năm**')
         price_year = df_cdnow_raw.groupby('Year').agg(revenue=("order_amount", 'sum'))
         price_year.reset_index(inplace=True)
-        st.dataframe(price_year)
+        price_year_plot = px.bar(price_year,x='Year', y='revenue', text_auto = '.s', color='Year', color_discrete_sequence=['#435B66', '#A76F6F'], template='seaborn')
+        price_year_plot.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
 
-
-        price_year_plot = px.bar(price_year,x='Year', y='revenue', text_auto = True, color_discrete_sequence =['#903749'])
-        st.plotly_chart(price_year_plot)
-
-        st.write('**Lượt mua qua các năm**')
         customer_year = df_cdnow_raw.groupby('Year')['transaction_id'].count()
         customer_year = customer_year.reset_index()
-        st.dataframe(customer_year)
+        customer_year_plot = px.bar(customer_year,x='Year', y='transaction_id', text_auto = '.s', color='Year', color_discrete_sequence=['#E06469', '#F2B6A0'], template='seaborn')
+        customer_year_plot.update_traces(textfont_size=16, textangle=0, textposition="outside", cliponaxis=False)
 
-        customer_year_plot = px.bar(customer_year,x='Year', y='transaction_id', text_auto = True, color_discrete_sequence =['#11999E'])
-        st.plotly_chart(customer_year_plot)
+        col1, col2 = st.columns(2)        
+        # Vẽ biểu đồ 1 trong cột 1
+        with col1:
+            st.write('**Doanh thu qua các năm**')
+            st.dataframe(price_year)
+            # st.plotly_chart(price_year_plot)
+            fig, axs = plt.subplots(1, 1, figsize=(10, 6))
+            sns.barplot(x='Year', y='revenue', data=price_year, palette=['#435B66', '#A76F6F'])
+            plt.title('Biểu đồ 1')
+            st.pyplot(fig)
+
+        # Vẽ biểu đồ 2 trong cột 2
+        with col2:
+            st.write('**Lượt mua qua các năm**')
+            st.dataframe(customer_year)
+            # st.plotly_chart(customer_year_plot)
+            fig, axs = plt.subplots(1, 1, figsize=(10, 6))
+            sns.barplot(x='Year', y='transaction_id', data=customer_year, palette=['#E06469', '#F2B6A0'])
+            plt.title('Biểu đồ 2')
+            st.pyplot(fig)
 
         st.write('''**Nhận xét:**
         * Năm 1997 hơn năm 1998 cả về doanh thu và lượt khách mua CD.
@@ -321,7 +336,14 @@ if project_num == 1:
         st.write('#### Doanh thu theo thời gian')
 
         df1 = df_cdnow_raw.reset_index().set_index('order_dt')[['order_amount']].resample(rule="MS").sum()
-        st.line_chart(df1)
+
+        fig = px.line(df1, y="order_amount", markers=True, color_discrete_sequence=['#B04759']) #text='order_amount'
+        fig.update_traces(textposition="top left")
+
+        st.plotly_chart(fig)
+
+
+        # st.line_chart(df1, color=['#EA5455'])
 
         st.markdown(''' **Nhận xét:**
         * Doanh thu có sự sụt giảm mạnh theo thời gian, bắt đầu từ tháng 2/1997
@@ -567,9 +589,6 @@ if project_num == 1:
             ## Rule 1
             segment_dict = {12:'Champion', 11:'Loyal Customers', 10:'Promising', 9:'New Customers', 8:'Abandoned Checkouts', 7:'Callback Requests', 6:'Warm_Leads', 5:'Cold Leads', 4:'Need Attention', 3:'Should not Lose', 2:'Sleepers', 1:'Lost', 0:'Lost'}
 
-            ## Rule 2
-            # segment_dict = {12:'Champion', 11:'Loyal Customers', 10:'Potential Loyalist', 9:'Recent Customers', 8:'Promising', 7:'Customers Needing Attention', 6:'About To Sleep', 5:'At Risk', 4:'Can’t Lose Them', 3:'Hibernating', 2:'Lost', 1:'Lost', 0:'Lost'}
-
             # Map each RFM score to a corresponding customer segment using the dictionary
             rfm_df['Customer_Group'] = rfm_df['RFM_Score'].map(segment_dict)
             rfm_df['Solution'] = rfm_df['RFM_Score'].map(apply_solution())
@@ -607,9 +626,6 @@ if project_num == 1:
 
             ## Rule 1
             segment_dict = {12:'Champion', 11:'Loyal Customers', 10:'Promising', 9:'New Customers', 8:'Abandoned Checkouts', 7:'Callback Requests', 6:'Warm_Leads', 5:'Cold Leads', 4:'Need Attention', 3:'Should not Lose', 2:'Sleepers', 1:'Lost', 0:'Lost'}
-
-            ## Rule 2
-            # segment_dict = {12:'Champion', 11:'Loyal Customers', 10:'Potential Loyalist', 9:'Recent Customers', 8:'Promising', 7:'Customers Needing Attention', 6:'About To Sleep', 5:'At Risk', 4:'Can’t Lose Them', 3:'Hibernating', 2:'Lost', 1:'Lost', 0:'Lost'}
 
             # Map each RFM score to a corresponding customer segment using the dictionary
             rfm_df['Customer_Group'] = rfm_df['RFM_Score'].map(segment_dict)
