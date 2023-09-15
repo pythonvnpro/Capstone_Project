@@ -219,7 +219,7 @@ if project_num == 1:
     if 'df_report' not in st.session_state:
         df_report = df_cdnow.copy()
         df_report= df_report.set_index('transaction_id')
-        df_report  = pd.concat([df_report , rfm_df], axis = 1).loc[:,["order_dt", "order_products", "order_amount", "month", "RFM_Score", "Customer_Group"]].reset_index()
+        df_report  = pd.concat([df_report , rfm_df.reset_index(drop=True)], axis = 1).loc[:,["order_dt", "order_products", "order_amount", "month", "RFM_Score", "Customer_Group"]].reset_index()
         df_report['order_dt'] = pd.to_datetime(df_report['order_dt'])
         df_report['Year'] = df_report['order_dt'].dt.year
         st.session_state['df_report']  = df_report
