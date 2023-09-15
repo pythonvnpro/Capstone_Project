@@ -216,7 +216,15 @@ if project_num == 1:
         st.session_state['rfm_df'] = rfm_df
     else:
         rfm_df = st.session_state['rfm_df']
-
+    if 'df_report' not in st.session_state:
+        df_report = df_cdnow.copy()
+        df_report= df_report.set_index('transaction_id')
+        df_report  = pd.concat([df_report , rfm_df], axis = 1).loc[:,["order_dt", "order_products", "order_amount", "month", "RFM_Score", "Customer_Group"]].reset_index()
+        df_report['order_dt'] = pd.to_datetime(df_report['order_dt'])
+        df_report['Year'] = df_report['order_dt'].dt.year
+        st.session_state['df_report']  = df_report
+    else:
+        df_report = st.session_state['df_report']    
 ### END: TRÁNH LÀM CHẬM HỆ THỐNG DO PHẢI XỬ LÝ LẠI MỖI KHI CHỌN CÁC CHỨC NĂNG ###
 
     # Hiển thị danh sách các tùy chọn cho người dùng lựa chọn từng bước trong dự án
@@ -241,7 +249,7 @@ if project_num == 1:
         df_cdnow_raw.order_dt= pd.to_datetime(df_cdnow_raw.order_dt, infer_datetime_format=True)
 
         st.markdown('### Dữ liệu được cung cấp:')
-        st.dataframe(df_cdnow_raw.head())
+        st.dataframe(df_cdnow_raw[["transaction_id", "order_dt", "order_products", "order_amount"]].head())
 
         st.markdown(separator_html, unsafe_allow_html=True)
 
@@ -280,15 +288,15 @@ if project_num == 1:
         # st.image('images/2.png')
         # st.image('images/3.png')
 
-        st.write("**Quantity**")
+        st.markdown("**Quantity**")
         fig_1 = px.histogram(df_cdnow_raw, x="order_products", marginal="box", color='Year', color_discrete_sequence=['#F07B3F', '#609966'])
         st.plotly_chart(fig_1)
 
-        st.write("**Price**")
+        st.markdown("**Price**")
         fig_2 = px.histogram(df_cdnow_raw, x="order_amount", marginal="box", color='Year', color_discrete_sequence=['#903749', '#0D7377'] )
         st.plotly_chart(fig_2)
 
-        st.write(''' **Nhận xét:**
+        st.markdown(''' **Nhận xét:**
         * Biến quantity và price đều có outliers, số lượng không nhiều vì vậy có thể loại bỏ các outliers này mà không ảnh hưởng lớn đến dữ liệu, tuy nhiên, do đây là dữ liệu về lượt mua đĩa CD vì vậy các giá trị ngoại lai này cũng có thể hiểu là một hành vi bất thường không hiếm gặp của khách hàng mua sắm.
             
                 => Đối với data này xem xét giữ lại outliers để tính toán
@@ -350,21 +358,82 @@ if project_num == 1:
         ''')
        
     elif step == 'Applicable models':
-        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["## **RFM**\n**\***", "## **RFM**\n**KMeans Sklearn**","## **RFM**\n**Hierarchical Scipy**","## **RFM**\n**pyspark KMeans**","## **RFM**\n**MiniBatchKMeans**","## **RFM**\n**DBSCAN**","## **Evaluating the models**\n**Report**"])
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["## **RFM**\n**\***", "## **RFM**\n**KMeans Sklearn**","## **RFM**\n**Hierarchical Scipy**","## **RFM**\n**Pyspark KMeans**","## **RFM**\n**MiniBatchKMeans**","## **RFM**\n**DBSCAN**","## **Evaluating the models**\n**Report**"])
         with tab1: # RFM
             # current_path = os.path.dirname(os.path.realpath(__file__))
             # st.write(current_path)
             # print(current_path)
-            st.image('/mount/src/capstone_project/Project_1/images/RFM.png', width=700)
-            # Đường dẫn đến files png
-            directory = f'Project_{project_num}/images/slides'
-            images = project_show_range_img(directory, 11, 17)
-            # Loop through the images and display them using st.image
-            for image in images:
-                img = Image.open(os.path.join(directory, image))
-                print(img)
-                st.image(img)
+            st.image(f'Project_{project_num}/images/slides/11.PNG')
+            st.image(f'Project_{project_num}/images/slides/13.PNG')
+            st.image(f'Project_{project_num}/images/slides/12.PNG')
             
+            ### Virsulization
+            st.markdown("#### **Virsulization for RFM**")
+            # Create the figure and subplots
+            fig, axs = plt.subplots(3, 1, figsize=(9,5))
+            sns.distplot(rfm_df['Recency'], ax=axs[0]) # Plot distribution of R
+            sns.distplot(rfm_df['Frequency'], ax=axs[1]) # Plot distribution of F
+            sns.distplot(rfm_df['Monetary'], ax=axs[2]) # Plot distribution of M
+            # Display the figure using st.pyplot
+            st.pyplot(fig)
+            fig, axs = plt.subplots(ncols=3, figsize=(9, 3))
+            for i, column in enumerate(['Recency','Frequency','Monetary']):
+                sns.boxplot(x=rfm_df[column], ax=axs[i])
+                axs[i].set_title('Box plot of ' + column)
+
+            plt.tight_layout()
+            st.pyplot(fig)
+            st.markdown("**Nhận xét**")
+            st.markdown("- Recency lệch trái,  không có outliers")
+            st.markdown("- Frequency, Monetary: lệch phải, có outliers")
+            st.write(f"\n#### Chi tiết kết quả đánh giá cho phân nhóm RFM")
+            mapping = {'Champion':12, 'Loyal Customers':11, 'Promising':10, 'New Customers':9, 'Abandoned Checkouts':8, 'Callback Requests':7, 'Warm_Leads':6, 'Cold Leads':5, 'Need Attention':4, 'Should not Lose':3, 'Sleepers':2, 'Lost':1}
+            for k, v in mapping.items():
+                st.write(k + ',')
+                st.write(df_report[df_report['RFM_Score'] == v].drop(['transaction_id','RFM_Score','Year'], axis=1).describe().T)
+                st.write()
+
+            st.image(f'Project_{project_num}/images/slides/14.PNG')
+            st.markdown("**Nhận xét**")
+            st.markdown("- Lượng khách hàng mang lại dòng tiền cho công ty tốt là nhóm Champion ~ 10%, Loyal Customers ~ 8.11%")
+            st.markdown("- Bên cạnh đó từ số liệu cho thấy cần hành động nhanh trước khi mất đi một lượng lớn khách hàng thuộc các nhóm Sleepers ~ 16.73%, Shouldn't Lose ~ 16.42%, Need Attention ~ 11.01%.")
+            st.markdown("- Cũng như cần chạy thêm chiến dịch để có biến đổi những khách hàng đang không quan tâm trở lại thành khách hàng nhóm Cold Leads ~ 2.93%, Lost ~ 5.28%, Callback Requests ~ 5.92%")
+
+            st.image(f'Project_{project_num}/images/slides/15.PNG')
+            st.markdown("**Nhận xét**")
+            st.markdown("- Rõ ràng bộ phận chăm sóc khách hàng, marketing, sales khá yếu dẫn đến số lượng chi tiêu bị sụt giảm rất lớn trên từng nhóm khách hàng")
+            st.markdown("Thậm chí có những nhóm khách hàng Sleepers, Shouldn't Lose, Cold Leads, Warm_Leads trong 1 năm không được cải thiện, không phát sinh dòng tiền cho công ty => cần điều chỉnh các bộ phận")
+            st.markdown("=> Có trục trặc lớn về sản phẩm or cơ cấu quản lý vận hành của công ty này khá yếu.")
+            st.markdown("\n\n#### **Vậy cần cho ra những sản phẩm nào + giá thành khoảng bao nhiêu sẽ phù hợp ?**")
+
+            st.image(f'Project_{project_num}/images/slides/16.PNG')
+            st.markdown("**Nhận Xét**")
+            st.markdown("- Nhóm khách hàng mang lại dòng tiền cho công ty có Recency ngắn ~ < 150 ngày và chi tiền nhiều")
+            st.markdown("- Khoảng chi tiền nhiều nhất rơi vào ~ < 2000 => tập trung ra sản phầm tầm tổng giá trong phân khúc giá này.")
+            st.markdown("- Trong phạm vi giới hạn thời gian nên tạm thời chúng ta tạm dừng phân tích sâu đến đây.")
+            
+            # Calculate average values for each RFM_Level, and return a size of each segment
+            rfm_agg = rfm_df.groupby('Customer_Group').agg({
+                'Recency': 'mean',
+                'Frequency': 'mean',
+                'Monetary': ['mean', 'count']
+                }).round(0)
+
+            rfm_agg.columns = rfm_agg.columns.droplevel()
+            rfm_agg.columns = ['RecencyMean', 'FrequencyMean', 'MonetaryMean', 'Count']
+            rfm_agg['Percent'] = round((rfm_agg['Count']/rfm_agg.Count.sum())*100, 2)
+
+            # Reset the index
+            rfm_agg = rfm_agg.reset_index()
+            st.dataframe(rfm_agg)
+            #### Scatter Plot (RFM)
+            st.markdown("\n#### **Scatter Plot (RFM)**")
+            # Set the figure size before plotting
+            fig, axs = plt.subplots(1, 1, figsize=(20,8))
+            fig = px.scatter(rfm_agg, x="RecencyMean", y="MonetaryMean", size="FrequencyMean", color="Customer_Group",
+                    hover_name="Customer_Group", size_max=100)
+            # plt.savefig('images/RFM Segments - Scatter Plot.png')
+            st.plotly_chart(fig)
         with tab2: # RFM + KMeans
             st.image(f'Project_{project_num}/images/RFM_ML_KMeans.png', width=700   )
             # Đường dẫn đến files png
