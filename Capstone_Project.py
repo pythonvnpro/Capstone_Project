@@ -132,7 +132,7 @@ project = left_column.selectbox(":blue[**Select project:**]", projects, index=0)
 # Lưu trữ chỉ số index của dự án được chọn
 project_num = projects.index(project) + 1
 
-def highlight_rows_even_odd(row, color1='#CBB279', color2='EEEEEE'):
+def highlight_rows_even_odd(row, color1='#CBB279', color2='#EEEEEE'):
     if row.name % 2 == 0:
         return [f'background-color: {color1}']*len(row)
     else:
@@ -824,7 +824,7 @@ if project_num == 1:
             ##Save model
             model_kmeans_lds9.write().overwrite().save(f'Project_{project_num}/models/new_rfm_kmeans_lds9')
 
-        def visulization_download(request_data, filter_transID= [0], label_key1='Download data as CSV', label_key2='Download data as Excel', filename= 'Data_models_clustering_report (upload file)'):
+        def visulization_download(request_data, filter_transID= [0], label_key1='Download data as CSV', label_key2='Download data as Excel', filename= 'Data_models_clustering_report (upload file)',color1='#CBB279', color2='#EEEEEE'):
         ## Visualization
             # Calculate average values for each RFM_Level, and return a size of each segment
             rfm_agg_kmeans_lds9 = request_data.groupby('cluster_kmeans_lds9').agg({
@@ -848,7 +848,7 @@ if project_num == 1:
             sum_request_data= request_data.copy()      # cho sheetname= 'Sum_&_segmentation_of_customers'
             if len(filter_transID) > 1: # Có truyền list transaction_id để lọc lại chỉ lấy dữ liệu đúng trong file upload lên phân tích
                 request_data= request_data[~request_data['transaction_id'].isin(filter_transID)]
-            st.dataframe(request_data.head(20).style.apply(highlight_rows_even_odd_2, axis=1))           
+            st.dataframe(request_data.head(20).style.apply(highlight_rows_even_odd,color1= color1, color2= color2, axis=1))           
 
             col1, col2, col3, col4 = st.columns(4) 
             @st.cache_data
@@ -1026,7 +1026,7 @@ if project_num == 1:
                         t0_rfm_df_new = datetime.now()
                         rfm_df_new= rfm_pyspark_kmeans(tab1_rfm_filtered, f'Project_{project_num}/models/rfm_kmeans_lds9')
                         st.write("**RESULTS MODEL ANALYZED AND EVALUATED**", datetime.now() - t0_rfm_df_new)
-                        visulization_download(rfm_df_new, [0],  label_key1='Download data as CSV', label_key2='Download data as Excel', filename= 'Data_models_clustering_report')
+                        visulization_download(rfm_df_new, [0],  label_key1='Download data as CSV', label_key2='Download data as Excel', filename= 'Data_models_clustering_report', color1= '#AEE2FF', color2= '#E6FFFD')
 
                     
         with t2: # UPLOAD INFOR
@@ -1052,7 +1052,7 @@ if project_num == 1:
                     c1.dataframe(data_upload.head(500).style.apply(highlight_rows_even_odd_2, axis=1))
 
                     c2.markdown('**Original data**')                    
-                    c2.dataframe(df_cdnow.head(500).style.apply(highlight_rows_even_odd_1, axis=1))
+                    c2.dataframe(df_cdnow.head(500).style.apply(highlight_rows_even_odd, color1= '#A8DF8E', color2= '#F3FDE8', axis=1))
 
                     r_solution= analyze_trend_and_seasonality_pro(df_cdnow, data_upload, len(data_upload), 'order_products', 'Xu hướng giá trị trung bình theo tháng (original data)', 'Xu hướng giá trị trung bình theo tháng (uploaded data)', threshold)
 
@@ -1163,7 +1163,7 @@ if project_num == 1:
 
                         rfm_df_new= rfm_pyspark_kmeans(tab2_concat_rfm, f'Project_{project_num}/models/new_rfm_kmeans_lds9')
                         st.write(f"**BUILDED AND SAVED NEW MODEL WITH K = {select_k}**", datetime.now() - t0_rfm_df_new)
-                        visulization_download(rfm_df_new, df_cdnow['transaction_id'],  label_key1='Download data as CSV_3', label_key2='Download data as Excel_3', filename= 'Data_new_models_clustering_report (upload file)')
+                        visulization_download(rfm_df_new, df_cdnow['transaction_id'],  label_key1='Download data as CSV_3', label_key2='Download data as Excel_3', filename= 'Data_new_models_clustering_report (upload file)', color1= '#AEE2FF', color2= '#E6FFFD')
                     
                         
 
@@ -1173,7 +1173,7 @@ if project_num == 1:
                         t0_rfm_df_new = datetime.now()
                         rfm_df_new= rfm_pyspark_kmeans(tab2_concat_rfm, f'Project_{project_num}/models/rfm_kmeans_lds9')
                         st.write("**RESULTS MODEL ANALYZED AND EVALUATED**", datetime.now() - t0_rfm_df_new)
-                        visulization_download(rfm_df_new, df_cdnow['transaction_id'],  label_key1='Download data as CSV_2', label_key2='Download data as Excel_2', filename= 'Data_models_clustering_report (upload file)')
+                        visulization_download(rfm_df_new, df_cdnow['transaction_id'],  label_key1='Download data as CSV_2', label_key2='Download data as Excel_2', filename= 'Data_models_clustering_report (upload file)', color1= '#AEE2FF', color2= '#E6FFFD')
 
 
             # on_significantly_similar_dissimilar = st.toggle(':orange[**Interpret significantly similar data and significantly dissimilar data**]',value= False)
