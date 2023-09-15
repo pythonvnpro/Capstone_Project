@@ -491,15 +491,40 @@ if project_num == 1:
                 print(img)
                 st.image(img)
         with tab6: # RFM + DBSCAN
-            print("tab")
-            # Đường dẫn đến files png
-            directory = f'Project_{project_num}/images/slides'
-            images = project_show_range_img(directory, 27, 29)
-            # Loop through the images and display them using st.image
-            for image in images:
-                img = Image.open(os.path.join(directory, image))
-                print(img)
-                st.image(img)
+            st.image(f'Project_{project_num}/images/slides/27.PNG')
+            st.markdown("#### Ta cần có:")
+            st.markdown("- :red[**knee_point**]")
+            st.markdown("- :blue[**min_sample**] + :blue[**eps**] => **dbscan = DBSCAN(eps=:blue[**eps**], min_samples= :blue[**min_sample**] , metric='euclidean**")
+            st.image(f'Project_{project_num}/images/dbscan_knee_point.png')
+            st.code('''
+                    from sklearn.neighbors import NearestNeighbors
+                    neighbors = NearestNeighbors(n_neighbors=10)
+                    neighbors_fit = neighbors.fit(X)
+                    distances, indices = neighbors_fit.kneighbors(X)
+                    distances = np.sort(distances, axis=0)
+                    ''')
+            st.markdown("**Với bộ dữ liệu CDNOW này cho kết quả ):*")
+            st.image(f'Project_{project_num}/images/dbscan_knee_point_unknow.png')
+            st.markdown("**Nhận xét**")
+            st.markdown("- Nếu chỉ dựa vào biểu đồ không thể xác định được gì ")
+            st.markdown("- Ta sẽ tự đi tiến hành tìm \"knee_point\" tốt nhất có thể cho bộ dữ liệu này")
+            st.markdown("#### Cố gắng tìm ra giá trị \":red[**knee_point**]\" tốt nhất có thể cho bộ dữ liệu này")
+            st.image(f'Project_{project_num}/images/knee_point.png')
+            st.markdown("#### Kế thừa từ kết quả :red[**knee_point**] mới tìm được => đi phân tích tìm ra :blue[**min_sample**] + :blue[**eps**]")
+            st.image(f'Project_{project_num}/images/dbscan_find_min_sample_eps.png')
+            st.markdown("**Nhận xét**")
+            st.markdown("Do cả hai tùy chọn đều có cùng số lượng cụm, điểm nhiễu và hệ số Silhouette. Tuy nhiên, min_samples khác nhau giữa hai tùy chọn.")
+            st.markdown("- Với option 1: có min_samples bằng 2, có nghĩa là một điểm được xem là cốt lõi nếu nó có ít nhất 2 điểm trong bán kính eps của nó (bao gồm chính nó).")
+            st.markdown("- Với option 2: có min_samples bằng 3, có nghĩa là một điểm được xem là cốt lõi nếu nó có ít nhất 3 điểm trong bán kính eps của nó (bao gồm chính nó).")
+            st.markdown("Mục tiêu chính ở đây muốn các cụm đưa ra ít nhiễu hơn và rõ ràng hơn")
+            st.markdown("=> Kết luận: sẽ chọn min_samples lớn hơn, tức là chọn option 2 với: min_samples= 3, eps= 2.8000000000000003 để đưa vào model DBScan")
+            st.markdown("##")
+            st.markdown(":blue[**TƯỞNG TỪ DIỂM TƯỞNG ĐÂU BẾ TẮC - SAU NỔ LỰC THÀNH QUẢ TA THU LẠI RẤT ẤN TƯỢNG VỚI CHỈ SỐ CÁC MÔ HÌNH KHÁC ƯỚC MƠ**]")
+            st.markdown("**=> silhouette score= 0.9055628792442165**")
+            st.markdown("##")
+            st.image(f'Project_{project_num}/images/slides/28.PNG')
+            st.image(f'Project_{project_num}/images/slides/29.PNG')
+            
         with tab7: # Report
             # Đường dẫn đến files
             directory = f'Project_{project_num}/images/slides'
@@ -1014,13 +1039,15 @@ if project_num == 1:
                         data_system_filtered = data_system.loc[data_system['transaction_id'] == int(filter_trans_id.strip().replace(",",""))]
                         tab1_rfm_filtered = tab1_rfm.reset_index()
                         tab1_rfm_filtered = tab1_rfm_filtered.loc[tab1_rfm_filtered['transaction_id'] == int(filter_trans_id.strip().replace(",",""))]
-                        
-                        # Display filtered dataframes
-                        # st.markdown("**Transaction**")
-                        # st.dataframe(data_system_filtered)
 
-                    st.markdown("**RFM**")
-                    st.dataframe(tab1_rfm_filtered.style.apply(highlight_rows_even_odd_2, axis=1))
+                    col1, col2 =st.columns(2)
+                    with col1:
+                        # Display filtered dataframes
+                        st.markdown("**Transaction**")
+                        st.dataframe(data_system_filtered.reset_index()[["transaction_id", "order_dt", "order_products", "order_amount", "month"]].style.apply(highlight_rows_even_odd_2, axis=1))
+                    with col2:
+                        st.markdown("**RFM**")
+                        st.dataframe(tab1_rfm_filtered.style.apply(highlight_rows_even_odd, axis=1))
                     col1, col2, col3 = st.columns(3)
                     if col2.button('Apply PySpark KMeans Export file', on_click=click_button):
                         t0_rfm_df_new = datetime.now()
