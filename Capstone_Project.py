@@ -297,10 +297,10 @@ if project_num == 1:
         fig_2 = px.histogram(df_cdnow_raw, x="order_amount", marginal="box", color='Year', color_discrete_sequence=['#903749', '#0D7377'] )
         st.plotly_chart(fig_2)
 
-        st.markdown(''' **Nhận xét:**
+        st.write(''' **Nhận xét:**
         * Biến quantity và price đều có outliers, số lượng không nhiều vì vậy có thể loại bỏ các outliers này mà không ảnh hưởng lớn đến dữ liệu, tuy nhiên, do đây là dữ liệu về lượt mua đĩa CD vì vậy các giá trị ngoại lai này cũng có thể hiểu là một hành vi bất thường không hiếm gặp của khách hàng mua sắm.
             
-                => Đối với data này xem xét giữ lại outliers để tính toán
+                => Đối với data này xem xét giữ lại outliers để tính toán\n
 
         * Dữ liệu lệch phải nên áp dụng RobustScalers cho dữ liệu này.
         ''')
@@ -381,7 +381,7 @@ if project_num == 1:
             for i, column in enumerate(['Recency','Frequency','Monetary']):
                 sns.boxplot(x=rfm_df[column], ax=axs[i])
                 axs[i].set_title('Box plot of ' + column)
-
+            st.dataframe(df_report)
             plt.tight_layout()
             st.pyplot(fig)
             st.markdown("**Nhận xét**")
