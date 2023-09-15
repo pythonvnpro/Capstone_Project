@@ -316,7 +316,7 @@ if project_num == 1:
             # st.plotly_chart(price_year_plot)
             fig, axs = plt.subplots(1, 1, figsize=(10, 6))
             sns.barplot(x='Year', y='revenue', data=price_year, palette=['#435B66', '#A76F6F'])
-            plt.title('Biểu đồ 1')
+            plt.title('')
             st.pyplot(fig)
 
         # Vẽ biểu đồ 2 trong cột 2
@@ -326,7 +326,7 @@ if project_num == 1:
             # st.plotly_chart(customer_year_plot)
             fig, axs = plt.subplots(1, 1, figsize=(10, 6))
             sns.barplot(x='Year', y='transaction_id', data=customer_year, palette=['#E06469', '#F2B6A0'])
-            plt.title('Biểu đồ 2')
+            plt.title('')
             st.pyplot(fig)
 
         st.write('''**Nhận xét:**
