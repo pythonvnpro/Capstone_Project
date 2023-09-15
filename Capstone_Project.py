@@ -224,7 +224,6 @@ if project_num == 1:
         df_report= df_report.reset_index()
         df_report['order_dt'] = pd.to_datetime(df_report['order_dt'])
         df_report['Year'] = df_report['order_dt'].dt.year
-        st.dataframe(df_report)
         st.session_state['df_report']  = df_report
     else:
         df_report = st.session_state['df_report']    
@@ -382,7 +381,6 @@ if project_num == 1:
             for i, column in enumerate(['Recency','Frequency','Monetary']):
                 sns.boxplot(x=rfm_df[column], ax=axs[i])
                 axs[i].set_title('Box plot of ' + column)
-            st.dataframe(df_report)
             plt.tight_layout()
             st.pyplot(fig)
             st.markdown("**Nhận xét**")
