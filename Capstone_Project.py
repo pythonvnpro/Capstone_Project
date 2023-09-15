@@ -435,7 +435,6 @@ if project_num == 1:
             # plt.savefig('images/RFM Segments - Scatter Plot.png')
             st.plotly_chart(fig)
         with tab2: # RFM + KMeans
-            st.image(f'Project_{project_num}/images/RFM_ML_KMeans.png', width=700   )
             # Đường dẫn đến files png
             directory = f'Project_{project_num}/images/slides'
             images = project_show_range_img(directory, 18, 20)
@@ -445,7 +444,6 @@ if project_num == 1:
                 print(img)
                 st.image(img)
         with tab3: # RFM + Hierarchical
-            st.image(f'Project_{project_num}/images/RFM_ML_Hierarchical.png', width=700)
             # Đường dẫn đến files png
             directory = f'Project_{project_num}/images/slides'
             images = project_show_range_img(directory, 21, 23)
@@ -455,7 +453,6 @@ if project_num == 1:
                 print(img)
                 st.image(img)
         with tab4: # RFM + pyspark KMeans
-            st.image(f'Project_{project_num}/images/RFM_pspark_KMeans.png', width=700)
             # Đường dẫn đến files png
             directory = f'Project_{project_num}/images/slides'
             images = project_show_range_img(directory, 24, 26)
