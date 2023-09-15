@@ -144,6 +144,18 @@ def highlight_rows_even_odd_2(row):
         return ['background-color: lightcoral']*len(row)
     else:
         return ['background-color: white']*len(row)
+    
+def row_color_1(row):
+    if row.name % 2 == 0:
+        return ['background-color: #F9F5E7']*len(row)
+    else:
+        return ['background-color: #F8EAD8']*len(row)
+    
+def row_color_2(row):
+    if row.name % 2 == 0:
+        return ['background-color: #F7FFE5']*len(row)
+    else:
+        return ['background-color: #E1ECC8']*len(row)
 # Chọn dự án
 if project_num == 1:
     # Hiển thị tên của dự án 
@@ -251,7 +263,7 @@ if project_num == 1:
         df_cdnow_raw.order_dt= pd.to_datetime(df_cdnow_raw.order_dt, infer_datetime_format=True)
 
         st.markdown('### Dữ liệu được cung cấp:')
-        st.dataframe(df_cdnow_raw[["transaction_id", "order_dt", "order_products", "order_amount"]].head())
+        st.dataframe(df_cdnow_raw[["transaction_id", "order_dt", "order_products", "order_amount"]].head().style.apply(row_color_2, axis=1))
 
         st.markdown(separator_html, unsafe_allow_html=True)
 
@@ -261,10 +273,10 @@ if project_num == 1:
         st.write(df_cdnow_raw.shape)
         st.write("-------------------")
         st.write("**Describe:**")
-        st.write(df_cdnow_raw.describe().T)
+        st.write(df_cdnow_raw.describe().T.reset_index().style.apply(row_color_1, axis=1))
         st.write("-------------------")
         st.write('**Kiểm tra dữ liệu thiếu:**')
-        st.dataframe(pd.concat([df_cdnow_raw.isnull().sum(axis=0).sort_values(ascending=False),df_cdnow_raw.isnull().sum().sort_values(ascending=False)/len(df_cdnow_raw)*100], axis=1, ).rename(columns={0:'count',1:'percentage'}))
+        st.dataframe(pd.concat([df_cdnow_raw.isnull().sum(axis=0).sort_values(ascending=False),df_cdnow_raw.isnull().sum().sort_values(ascending=False)/len(df_cdnow_raw)*100], axis=1, ).rename(columns={0:'count',1:'percentage'}).reset_index().style.apply(row_color_1, axis=1))
         st.write('=> Không có dữ liệu thiếu')
         st.write("-------------------")
         st.write('**Kiểm tra dữ liệu trùng:**')
@@ -321,7 +333,7 @@ if project_num == 1:
         # Vẽ biểu đồ 1 trong cột 1
         with col1:
             st.write('**Doanh thu qua các năm**')
-            st.dataframe(price_year)
+            st.dataframe(price_year.style.apply(row_color_1, axis=1))
             # st.plotly_chart(price_year_plot)
             fig, axs = plt.subplots(1, 1, figsize=(10, 6))
             sns.barplot(x='Year', y='revenue', data=price_year, palette=['#435B66', '#A76F6F'])
@@ -331,7 +343,7 @@ if project_num == 1:
         # Vẽ biểu đồ 2 trong cột 2
         with col2:
             st.write('**Lượt mua qua các năm**')
-            st.dataframe(customer_year)
+            st.dataframe(customer_year.style.apply(row_color_1, axis=1))
             # st.plotly_chart(customer_year_plot)
             fig, axs = plt.subplots(1, 1, figsize=(10, 6))
             sns.barplot(x='Year', y='transaction_id', data=customer_year, palette=['#E06469', '#F2B6A0'])
@@ -390,7 +402,7 @@ if project_num == 1:
             mapping = {'Champion':12, 'Loyal Customers':11, 'Promising':10, 'New Customers':9, 'Abandoned Checkouts':8, 'Callback Requests':7, 'Warm_Leads':6, 'Cold Leads':5, 'Need Attention':4, 'Should not Lose':3, 'Sleepers':2, 'Lost':1}
             for k, v in mapping.items():
                 st.write(k + ',')
-                st.write(df_report[df_report['RFM_Score'] == v].drop(['transaction_id','RFM_Score','Year'], axis=1).describe().T)
+                st.write(df_report[df_report['RFM_Score'] == v].drop(['transaction_id','RFM_Score','Year'], axis=1).describe().T.reset_index().style.apply(row_color_1, axis=1))
                 st.write()
 
             st.image(f'Project_{project_num}/images/slides/14.PNG')
@@ -425,7 +437,7 @@ if project_num == 1:
 
             # Reset the index
             rfm_agg = rfm_agg.reset_index()
-            st.dataframe(rfm_agg)
+            st.dataframe(rfm_agg.style.apply(row_color_1, axis=1))
             #### Scatter Plot (RFM)
             st.markdown("\n#### **Scatter Plot (RFM)**")
             # Set the figure size before plotting
