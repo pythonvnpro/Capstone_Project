@@ -519,7 +519,7 @@ if project_num == 1:
             st.markdown("Mục tiêu chính ở đây muốn các cụm đưa ra ít nhiễu hơn và rõ ràng hơn")
             st.markdown("=> Kết luận: sẽ chọn min_samples lớn hơn, tức là chọn option 2 với: min_samples= 3, eps= 2.8000000000000003 để đưa vào model DBScan")
             st.markdown("##")
-            st.markdown(":blue[**TƯỞNG TỪ DIỂM TƯỞNG ĐÂU BẾ TẮC - SAU NỔ LỰC THÀNH QUẢ TA THU LẠI RẤT ẤN TƯỢNG VỚI CHỈ SỐ CÁC MÔ HÌNH KHÁC ƯỚC MƠ**]")
+            st.markdown(":blue[**TƯỞNG TỪ ĐIỂM TƯỞNG ĐÂU BẾ TẮC - SAU NỔ LỰC THÀNH QUẢ TA THU LẠI RẤT ẤN TƯỢNG VỚI CHỈ SỐ CÁC MÔ HÌNH KHÁC ƯỚC MƠ**]")
             st.markdown("**=> silhouette score= 0.9055628792442165**")
             st.markdown("##")
             st.image(f'Project_{project_num}/images/slides/28.PNG')
