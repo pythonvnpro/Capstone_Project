@@ -45,6 +45,11 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.clustering import KMeans, KMeansModel
 from pyspark.ml.evaluation import ClusteringEvaluator
 
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return b64.b64encode(data).decode()
+
 sns.set_style("whitegrid", {'axes.grid' : False})
 ## Sidebar: left
 st.markdown(
@@ -78,6 +83,112 @@ st.markdown("""
 separator_html = """
 <div style="background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); height: 3px;"></div>
 """
+
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return b64.b64encode(data).decode()
+
+def set_background(png_file):
+    bin_str = get_base64_of_bin_file(png_file)
+    page_bg_img = f'''
+    <style>
+    [data-testid="stAppViewContainer"]{{
+    color: "#f8f8f2";
+    opacity: 1;
+    background-image: url("data:image/png;base64,{bin_str}");
+    background-size: cover;
+    }}
+
+    [data-testid="stHeader"] {{
+    background: rgba(0,0,0,0);
+    }}
+
+    [data-testid="stSidebar"] {{
+    opacity: 1;
+    background: linear-gradient(-225deg, #4b0082 0.5%, #266260 50%, #87CEFA 100%);
+    # background: linear-gradient(-225deg, #FFEA7F 0%, #FFC700 48%, #FF9100 100%);
+    }}
+
+    .stMarkdown h1 {{
+            color: white;
+    }}
+    .stMarkdown h2 {{
+            color: white;
+    }}
+    .stMarkdown h3 {{
+            color: white;
+    }}
+    .stMarkdown p {{
+            color: white;
+    }}
+    .stMarkdown strong {{
+            color: white;
+    }}
+    .stMarkdown ul {{
+            color: white;
+    }}
+    .stMarkdown li {{
+            color: white;
+    }}
+    .stMarkdown span {{
+            color: white;
+    }}
+   
+    .stDataFrame>div>div>table {{
+            #background-color: #FFDA00;
+            color: black;
+    }}
+    .stCheckbox>div>div{{
+            background-color: #FFDA00;
+            color: #FFDA00;
+    }}
+    .stButton>button {{
+            #background-color: #FFDA00;
+            color: #FFDA00;
+    }}
+    .stTabs>div>div>div>button {{
+            #background-color: #FFDA00;
+            color: white;
+    }}
+    .st-bb {{
+            color: white;
+    }}
+    .stTextInput>div>div>input {{
+            color: black;
+    }}
+    .streamlit-expanderHeader {{
+            font-size:30px;
+            text-align:center;
+            color:#3A1769; 
+    }}
+    .streamlit-expanderHeader>p>strong {{
+            color:white; 
+    }}
+
+    </style>
+    '''
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+set_background('images/hinh_nen_2.png')
+
+def set_button_style():
+    st.markdown(
+        """
+        <style>
+        .stButton>button {
+            background-color: #D53D59;
+            color: white;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+set_button_style()
+
+
 with st.sidebar:
     st.image("images/Logo.png")
     st.image(f'Project_1/images/RFM.png', width=60)
@@ -248,9 +359,9 @@ if project_num == 1:
 ### END: TRÁNH LÀM CHẬM HỆ THỐNG DO PHẢI XỬ LÝ LẠI MỖI KHI CHỌN CÁC CHỨC NĂNG ###
 
     # Hiển thị danh sách các tùy chọn cho người dùng lựa chọn từng bước trong dự án
-    step = left_column.radio('', ['Business Understanding', 'Preprocessing + EDA', 'Applicable models', 'Prediction'])
+    step = left_column.radio('', [':orange[Business Understanding]', ':orange[Preprocessing + EDA]', ':orange[Applicable models]', ':orange[Prediction]'])
     # Xử lý sự kiện khi người dùng lựa chọn từng mục trong danh sách và hiển thị hình ảnh tương ứng
-    if step == 'Business Understanding':
+    if step == ':orange[Business Understanding]':
         # Đường dẫn đến files png
         directory = f'Project_{project_num}/images/slides'
         images = project_show_range_img(directory, 2, 6)
@@ -259,7 +370,7 @@ if project_num == 1:
             img = Image.open(os.path.join(directory, image))
             print(img)
             st.image(img)
-    elif step == 'Preprocessing + EDA':
+    elif step == ':orange[Preprocessing + EDA]':
         separator_html = """
         <div style="background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); height: 3px;"></div>
         """
@@ -376,7 +487,7 @@ if project_num == 1:
         * Doanh thu có sự sụt giảm mạnh theo thời gian, bắt đầu từ tháng 2/1997
         ''')
        
-    elif step == 'Applicable models':
+    elif step == ':orange[Applicable models]':
         tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["## **RFM**\n**\***", "## **RFM**\n**KMeans Sklearn**","## **RFM**\n**Hierarchical Scipy**","## **RFM**\n**Pyspark KMeans**","## **RFM**\n**MiniBatchKMeans**","## **RFM**\n**DBSCAN**","## **Evaluating the models**\n**Report**"])
         with tab1: # RFM
             # current_path = os.path.dirname(os.path.realpath(__file__))
@@ -538,7 +649,7 @@ if project_num == 1:
 
 
 
-    elif step == 'Prediction':
+    elif step == ':orange[Prediction]':
     ## FUNCTIONS ##
         # Hàm tạo dữ liệu thay đổi không đáng kể so với dữ liệu gốc dựa trên ngưỡng cho phép thay đổi trên giao diện cấu hình bằng biến threshold
         def significantly_similar_data(df_original, threshold = 0.5, save_file= None):
@@ -945,7 +1056,7 @@ if project_num == 1:
         t1, t2 = st.tabs(["## **Quick analysis of customers having new transactions**\n**in the system**", "## **Upload the file, analyze the data, segment the customers,**\n**and propose a plan**"])
         with t1: # INPUT INFOR
             with st.expander('**The default parameters of the application** ***(adjust if any)***'):
-                select_system = st.selectbox('**Select the system containing the transactions you want to analyze for rfm**', ['System_1', 'System_2'])
+                select_system = st.selectbox(':blue[**Select the system containing the transactions you want to analyze for rfm**]', ['System_1', 'System_2'])
                 col1, col2, col3 = st.columns(3)
                 col1.markdown('####')
                 col1.markdown('**Adjust the number of transactions for analysis**')
@@ -965,7 +1076,7 @@ if project_num == 1:
             c3.markdown("#")
             c3.markdown("##")
             c3.markdown("###")
-            choice = col3.checkbox('Reset status')
+            choice = col3.checkbox(':green[Reset status]')
             if choice:
                 reset_state()
 
@@ -1049,7 +1160,7 @@ if project_num == 1:
                         st.markdown("**RFM**")
                         st.dataframe(tab1_rfm_filtered.style.apply(highlight_rows_even_odd, axis=1))
                     col1, col2, col3 = st.columns(3)
-                    if col2.button('Apply PySpark KMeans Export file', on_click=click_button):
+                    if col2.button('Conduct clustering and generate reports', on_click=click_button):
                         t0_rfm_df_new = datetime.now()
                         rfm_df_new= rfm_pyspark_kmeans(tab1_rfm_filtered, f'Project_{project_num}/models/rfm_kmeans_lds9')
                         st.write("**RESULTS MODEL ANALYZED AND EVALUATED**", datetime.now() - t0_rfm_df_new)
@@ -1128,8 +1239,8 @@ if project_num == 1:
                             st.markdown("IV. Những rủi ro....")
                             st.markdown("V. Những đồng thuận....")
                     col1, col2 = st.columns(2)
-                    apply_solution1 = col1.checkbox(label='FULL PROCESS METHOD',value= st.session_state.apply_solution1)
-                    apply_solution2 = col2.checkbox(label='QUICK METHOD',value= st.session_state.apply_solution2)
+                    apply_solution1 = col1.checkbox(label=':red[FULL PROCESS METHOD]',value= st.session_state.apply_solution1)
+                    apply_solution2 = col2.checkbox(label=':red[QUICK METHOD]',value= st.session_state.apply_solution2)
                     c1, c2, c3 = st.columns(3)
                     # Hiển thị tên trường với một số căn chỉnh
                     c1.markdown('##')
