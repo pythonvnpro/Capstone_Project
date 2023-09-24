@@ -484,7 +484,7 @@ if project_num == 1:
         # st.line_chart(df1, color=['#EA5455'])
 
         st.markdown(''' **Nhận xét:**
-        * Doanh thu có sự sụt giảm mạnh theo thời gian, bắt đầu từ tháng 2/1997
+        * Doanh thu có sự sụt giảm mạnh theo thời gian, bắt đầu từ tháng 3/1997
         ''')
        
     elif step == ':orange[Applicable models]':
